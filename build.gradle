@@ -38,7 +38,12 @@ repositories {
 
 dependencies {
 //    compile 'org.springframework.boot:spring-boot-starter-data-rest'
+    compile "org.springframework.boot:spring-boot-starter-data-jpa"
     compile 'org.springframework.boot:spring-boot-starter-web'
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-hibernate5"
+
+    runtime "mysql:mysql-connector-java:5.1.37"
+
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
