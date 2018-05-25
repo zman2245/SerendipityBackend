@@ -23,6 +23,7 @@ tomcat
 *.class
 *.bin
 *.lock
+out/
 
 # Maven 
 target/
