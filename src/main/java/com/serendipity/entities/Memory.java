@@ -33,16 +33,16 @@ public class Memory {
     private int bgColor;
 
     @Column
-    private int creator;
+    private Integer creator;
 
     @Column
-    private int owner;
+    private Integer owner;
 
     @Column
-    private int currentHotspot;
+    private Integer currentHotspot;
 
     @Column
-    private int originalHotspot;
+    private Integer originalHotspot;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -95,35 +95,35 @@ public class Memory {
         this.bgColor = bgColor;
     }
 
-    public int getCreator() {
+    public Integer getCreator() {
         return creator;
     }
 
-    public void setCreator(int creator) {
+    public void setCreator(Integer creator) {
         this.creator = creator;
     }
 
-    public int getOwner() {
+    public Integer getOwner() {
         return owner;
     }
 
-    public void setOwner(int owner) {
+    public void setOwner(Integer owner) {
         this.owner = owner;
     }
 
-    public int getCurrentHotspot() {
+    public Integer getCurrentHotspot() {
         return currentHotspot;
     }
 
-    public void setCurrentHotspot(int currentHotspot) {
+    public void setCurrentHotspot(Integer currentHotspot) {
         this.currentHotspot = currentHotspot;
     }
 
-    public int getOriginalHotspot() {
+    public Integer getOriginalHotspot() {
         return originalHotspot;
     }
 
-    public void setOriginalHotspot(int originalHotspot) {
+    public void setOriginalHotspot(Integer originalHotspot) {
         this.originalHotspot = originalHotspot;
     }
 
