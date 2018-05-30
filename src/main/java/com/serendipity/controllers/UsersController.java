@@ -25,7 +25,7 @@ public class UsersController {
 
     @RequestMapping(value = "/users", method = RequestMethod.POST)
     @ResponseBody
-    public void createUser(@RequestParam String name,
+    public User createUser(@RequestParam String name,
                            @RequestParam(required = false, defaultValue = "") String bio) {
 
         User newUser = new User();
@@ -33,5 +33,7 @@ public class UsersController {
         newUser.setBio(bio);
 
         userRepository.save(newUser);
+
+        return newUser;
     }
 }

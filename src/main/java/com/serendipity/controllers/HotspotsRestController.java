@@ -1,26 +1,80 @@
 package com.serendipity.controllers;
 
-import com.serendipity.entities.Memory;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import com.serendipity.entities.Hotspot;
+import com.serendipity.exceptions.ResourceNotFoundException;
+import com.serendipity.repositories.HotspotRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class HotspotsRestController {
 
-    @RequestMapping("/hotspots/nearby")
+    public static final String DEFAULT_RADIUS = "500";
+
+    private HotspotRepository hotspotRepository;
+
+    @Autowired
+    public HotspotsRestController(HotspotRepository hotspotRepository) {
+        this.hotspotRepository = hotspotRepository;
+    }
+
+    @RequestMapping(value = "/hotspots/nearby", method = RequestMethod.GET)
     @ResponseBody
-    public List<Memory> nearbyHotspots(
+    public List<Hotspot> nearbyHotspots(
             @RequestParam("latitude") double latitude,
             @RequestParam("longitude") double longitude,
-            @RequestParam("radius") double radius) throws URISyntaxException {
-        List<Memory> memories = new ArrayList<>();
+            @RequestParam("radius") double radius) {
+        List<Hotspot> memories = new ArrayList<>();
 
         return memories;
+    }
+
+    @RequestMapping(value = "/hotspots/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public Hotspot getHotspot(
+            @PathVariable(value="id") String idString) {
+        long id;
+
+        try {
+            id = Long.parseLong(idString);
+        } catch (NumberFormatException e) {
+            throw new ResourceNotFoundException();
+        }
+
+        Optional<Hotspot> h = hotspotRepository.findById(id);
+
+        if (!h.isPresent()) {
+            throw new ResourceNotFoundException();
+        }
+
+        return h.get();
+    }
+
+    @RequestMapping(value = "/hotspots", method = RequestMethod.GET)
+    @ResponseBody
+    public List<Hotspot> getAllHotspots() {
+        return hotspotRepository.findAll();
+    }
+
+    @RequestMapping(value = "/hotspots", method = RequestMethod.POST)
+    @ResponseBody
+    public Hotspot createHotspot(
+            @RequestParam("latitude") float latitude,
+            @RequestParam("longitude") float longitude,
+            @RequestParam(value = "radius", required = false, defaultValue = DEFAULT_RADIUS) int radius,
+            @RequestParam("creator") int creatorId) {
+        Hotspot h = new Hotspot();
+        h.setCreator(creatorId);
+        h.setRadiusInFeet(radius);
+        h.setLatitude(latitude);
+        h.setLongitude(longitude);
+
+        hotspotRepository.save(h);
+
+        return h;
     }
 }
