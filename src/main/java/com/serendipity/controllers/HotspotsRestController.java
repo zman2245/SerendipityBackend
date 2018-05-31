@@ -1,6 +1,7 @@
 package com.serendipity.controllers;
 
 import com.serendipity.entities.Hotspot;
+import com.serendipity.entities.SerendipityCollection;
 import com.serendipity.exceptions.ResourceNotFoundException;
 import com.serendipity.repositories.HotspotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,13 @@ public class HotspotsRestController {
 
     @RequestMapping(value = "/hotspots/nearby", method = RequestMethod.GET)
     @ResponseBody
-    public List<Hotspot> nearbyHotspots(
+    public SerendipityCollection<Hotspot> nearbyHotspots(
             @RequestParam("latitude") double latitude,
             @RequestParam("longitude") double longitude,
             @RequestParam("radius") double radius) {
-        List<Hotspot> memories = new ArrayList<>();
+        SerendipityCollection<Hotspot> hotspots = new SerendipityCollection<>(new ArrayList<>());
 
-        return memories;
+        return hotspots;
     }
 
     @RequestMapping(value = "/hotspots/{id}", method = RequestMethod.GET)
@@ -56,8 +57,10 @@ public class HotspotsRestController {
 
     @RequestMapping(value = "/hotspots", method = RequestMethod.GET)
     @ResponseBody
-    public List<Hotspot> getAllHotspots() {
-        return hotspotRepository.findAll();
+    public SerendipityCollection<Hotspot> getAllHotspots() {
+        List<Hotspot> hotspots = hotspotRepository.findAll();
+
+        return new SerendipityCollection<>(hotspots);
     }
 
     @RequestMapping(value = "/hotspots", method = RequestMethod.POST)

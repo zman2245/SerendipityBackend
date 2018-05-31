@@ -1,6 +1,9 @@
 package com.serendipity.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,11 +41,17 @@ public class Memory {
     @Column
     private Integer owner;
 
-    @Column
-    private Integer currentHotspot;
+    @ManyToOne
+    @JoinColumn(name="currentHotspot", nullable=true)
+    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+    @JsonIdentityReference(alwaysAsId=true) // otherwise first ref as POJO, others as id
+    private Hotspot currentHotspot;
 
-    @Column
-    private Integer originalHotspot;
+    @ManyToOne
+    @JoinColumn(name="originalHotspot", nullable=true)
+    @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+    @JsonIdentityReference(alwaysAsId=true) // otherwise first ref as POJO, others as id
+    private Hotspot originalHotspot;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -111,19 +120,19 @@ public class Memory {
         this.owner = owner;
     }
 
-    public Integer getCurrentHotspot() {
+    public Hotspot getCurrentHotspot() {
         return currentHotspot;
     }
 
-    public void setCurrentHotspot(Integer currentHotspot) {
+    public void setCurrentHotspot(Hotspot currentHotspot) {
         this.currentHotspot = currentHotspot;
     }
 
-    public Integer getOriginalHotspot() {
+    public Hotspot getOriginalHotspot() {
         return originalHotspot;
     }
 
-    public void setOriginalHotspot(Integer originalHotspot) {
+    public void setOriginalHotspot(Hotspot originalHotspot) {
         this.originalHotspot = originalHotspot;
     }
 

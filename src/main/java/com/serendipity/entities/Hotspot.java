@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "Hotspot")
@@ -21,6 +22,12 @@ public class Hotspot {
     private Long id;
 
     @Column
+    private String title;
+
+    @Column
+    private String about;
+
+    @Column
     private Float latitude;
 
     @Column
@@ -31,6 +38,12 @@ public class Hotspot {
 
     @Column
     private Integer creator;
+
+    @OneToMany(mappedBy = "currentHotspot")
+    private Set<Memory> memories;
+
+    @OneToMany(mappedBy = "originalHotspot")
+    private Set<Memory> originalMemories;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -48,6 +61,22 @@ public class Hotspot {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAbout() {
+        return about;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
     }
 
     public Float getLatitude() {
@@ -80,6 +109,22 @@ public class Hotspot {
 
     public void setCreator(Integer creator) {
         this.creator = creator;
+    }
+
+    public Set<Memory> getMemories() {
+        return memories;
+    }
+
+    public void setMemories(Set<Memory> memories) {
+        this.memories = memories;
+    }
+
+    public Set<Memory> getOriginalMemories() {
+        return originalMemories;
+    }
+
+    public void setOriginalMemories(Set<Memory> originalMemories) {
+        this.originalMemories = originalMemories;
     }
 
     public Date getCreatedAt() {
