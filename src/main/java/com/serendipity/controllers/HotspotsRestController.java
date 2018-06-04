@@ -7,6 +7,7 @@ import com.serendipity.repositories.HotspotRepository;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.util.GeometricShapeFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +15,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * 4326 corresponds to earth
+ */
 @RestController
 public class HotspotsRestController {
 
-    public static final String DEFAULT_RADIUS = "500";
+    public static final String DEFAULT_RADIUS_IN_METERS = "500";
 
     private HotspotRepository hotspotRepository;
     private GeometryFactory geometryFactory;
@@ -68,12 +72,28 @@ public class HotspotsRestController {
         return new SerendipityCollection<>(hotspots);
     }
 
+    @RequestMapping(value = "/hotspots/search", method = RequestMethod.GET)
+    @ResponseBody
+    public SerendipityCollection<Hotspot> searchHotspots(
+            @RequestParam("latitude") float latitude,
+            @RequestParam("longitude") float longitude,
+            @RequestParam(value = "radius", required = false, defaultValue = DEFAULT_RADIUS_IN_METERS) int radius
+    ) {
+        GeometricShapeFactory shape = new GeometricShapeFactory(geometryFactory);
+        Point p = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        p.setSRID(HotspotRepository.SRID_EARTH);
+
+        List<Hotspot> hotspots = hotspotRepository.findWithinArea(p, radius);
+
+        return new SerendipityCollection<>(hotspots);
+    }
+
     @RequestMapping(value = "/hotspots", method = RequestMethod.POST)
     @ResponseBody
     public Hotspot createHotspot(
             @RequestParam("latitude") float latitude,
             @RequestParam("longitude") float longitude,
-            @RequestParam(value = "radius", required = false, defaultValue = DEFAULT_RADIUS) int radius,
+            @RequestParam(value = "radius", required = false, defaultValue = DEFAULT_RADIUS_IN_METERS) int radius,
             @RequestParam("creator") int creatorId) {
         Hotspot h = new Hotspot();
         h.setCreator(creatorId);
