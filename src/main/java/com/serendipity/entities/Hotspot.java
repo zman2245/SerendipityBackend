@@ -1,6 +1,7 @@
 package com.serendipity.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.vividsolutions.jts.geom.Point;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,11 +28,11 @@ public class Hotspot {
     @Column
     private String about;
 
+    /**
+     * Remember, PostGIS stores as longitude, latitude because that makes the most sense from an "x,y" perspective
+     */
     @Column
-    private Float latitude;
-
-    @Column
-    private Float longitude;
+    private Point location;
 
     @Column
     private Integer radiusInFeet;
@@ -79,20 +80,12 @@ public class Hotspot {
         this.about = about;
     }
 
-    public Float getLatitude() {
-        return latitude;
+    public Point getLocation() {
+        return location;
     }
 
-    public void setLatitude(Float latitude) {
-        this.latitude = latitude;
-    }
-
-    public Float getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Float longitude) {
-        this.longitude = longitude;
+    public void setLocation(Point location) {
+        this.location = location;
     }
 
     public Integer getRadiusInFeet() {

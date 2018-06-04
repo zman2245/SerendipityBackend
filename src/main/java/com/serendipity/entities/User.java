@@ -1,6 +1,7 @@
 package com.serendipity.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.vividsolutions.jts.geom.Point;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -25,11 +26,11 @@ public class User {
     @Column
     private String bio;
 
+    /**
+     * Remember, PostGIS stores as longitude, latitude because that makes the most sense from an "x,y" perspective
+     */
     @Column
-    private float latitude;
-
-    @Column
-    private float longitude;
+    private Point location;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -65,20 +66,12 @@ public class User {
         this.bio = bio;
     }
 
-    public float getLatitude() {
-        return latitude;
+    public Point getLocation() {
+        return location;
     }
 
-    public void setLatitude(float latitude) {
-        this.latitude = latitude;
-    }
-
-    public float getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(float longitude) {
-        this.longitude = longitude;
+    public void setLocation(Point location) {
+        this.location = location;
     }
 
     public Date getCreatedAt() {

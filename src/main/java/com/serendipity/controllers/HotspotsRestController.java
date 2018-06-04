@@ -4,6 +4,9 @@ import com.serendipity.entities.Hotspot;
 import com.serendipity.entities.SerendipityCollection;
 import com.serendipity.exceptions.ResourceNotFoundException;
 import com.serendipity.repositories.HotspotRepository;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,10 +20,12 @@ public class HotspotsRestController {
     public static final String DEFAULT_RADIUS = "500";
 
     private HotspotRepository hotspotRepository;
+    private GeometryFactory geometryFactory;
 
     @Autowired
     public HotspotsRestController(HotspotRepository hotspotRepository) {
         this.hotspotRepository = hotspotRepository;
+        this.geometryFactory = new GeometryFactory();
     }
 
     @RequestMapping(value = "/hotspots/nearby", method = RequestMethod.GET)
@@ -73,8 +78,7 @@ public class HotspotsRestController {
         Hotspot h = new Hotspot();
         h.setCreator(creatorId);
         h.setRadiusInFeet(radius);
-        h.setLatitude(latitude);
-        h.setLongitude(longitude);
+        h.setLocation(geometryFactory.createPoint(new Coordinate(longitude, latitude)));
 
         hotspotRepository.save(h);
 
