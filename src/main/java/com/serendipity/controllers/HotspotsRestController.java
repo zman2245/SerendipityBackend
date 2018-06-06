@@ -66,24 +66,23 @@ public class HotspotsRestController {
 
     @RequestMapping(value = "/hotspots", method = RequestMethod.GET)
     @ResponseBody
-    public SerendipityCollection<Hotspot> getAllHotspots() {
-        List<Hotspot> hotspots = hotspotRepository.findAll();
+    public SerendipityCollection<Hotspot> getHotspots(
+            @RequestParam(value = "latitude", required = false) Float latitude,
+            @RequestParam(value = "longitude", required = false) Float longitude,
+            @RequestParam(value = "radius", required = false, defaultValue = DEFAULT_RADIUS_IN_METERS) Integer radius) {
 
-        return new SerendipityCollection<>(hotspots);
-    }
+        List<Hotspot> hotspots;
 
-    @RequestMapping(value = "/hotspots/search", method = RequestMethod.GET)
-    @ResponseBody
-    public SerendipityCollection<Hotspot> searchHotspots(
-            @RequestParam("latitude") float latitude,
-            @RequestParam("longitude") float longitude,
-            @RequestParam(value = "radius", required = false, defaultValue = DEFAULT_RADIUS_IN_METERS) int radius
-    ) {
-        GeometricShapeFactory shape = new GeometricShapeFactory(geometryFactory);
-        Point p = geometryFactory.createPoint(new Coordinate(longitude, latitude));
-        p.setSRID(HotspotRepository.SRID_EARTH);
+        if (latitude == null || longitude == null || radius == null) {
+            // default behavior is return all (for now). May change as dataset grows.
+            hotspots = hotspotRepository.findAll();
+        } else {
+            GeometricShapeFactory shape = new GeometricShapeFactory(geometryFactory);
+            Point p = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+            p.setSRID(HotspotRepository.SRID_EARTH);
 
-        List<Hotspot> hotspots = hotspotRepository.findWithinArea(p, radius);
+            hotspots = hotspotRepository.findWithinArea(p, radius);
+        }
 
         return new SerendipityCollection<>(hotspots);
     }
