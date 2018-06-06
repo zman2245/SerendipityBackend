@@ -1,22 +1,25 @@
 package com.serendipity.controllers;
 
+import com.serendipity.entities.Hotspot;
 import com.serendipity.entities.Memory;
 import com.serendipity.entities.SerendipityCollection;
 import com.serendipity.repositories.MemoryRepository;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.EntityManager;
 
 @RestController
 public class MemoriesRestController {
 
+    private EntityManager entityManager;
     private MemoryRepository memoryRepository;
 
     @Autowired
-    public MemoriesRestController(MemoryRepository memRepo) {
+    public MemoriesRestController(MemoryRepository memRepo, EntityManager entityManager) {
         memoryRepository = memRepo;
+        this.entityManager = entityManager;
     }
 
     @RequestMapping(value = "/memories", method = RequestMethod.GET)
@@ -30,17 +33,23 @@ public class MemoriesRestController {
 
     @RequestMapping(value = "/memories", method = RequestMethod.POST)
     @ResponseBody
-    public void createMemory() {
+    public Memory createMemory(
+            @RequestParam(value = "hotspotId") long hotspotId,
+            @RequestParam(value = "message") String message
+    ) {
+        Session session = entityManager.unwrap(Session.class);
         Memory m = new Memory();
-        m.setBgColor(0x101020);
-        m.setMessage("hello world");
 
-        // TODO: for now just use hard-coded value for creator of 1
+        Hotspot h = session.load(Hotspot.class, hotspotId);
+
+        m.setCurrentHotspot(h);
+        m.setOriginalHotspot(h);
+        m.setMessage(message);
         m.setCreator(1);
-        m.setOwner(null);
-        m.setOriginalHotspot(null);
-        m.setCurrentHotspot(null);
+        m.setOwner(1);
 
         memoryRepository.save(m);
+
+        return m;
     }
 }
