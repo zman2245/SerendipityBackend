@@ -22,8 +22,10 @@ public class MemoriesRestController {
     @RequestMapping(value = "/memories", method = RequestMethod.GET)
     @ResponseBody
     public SerendipityCollection<Memory> myMemories() {
-        // TODO: this will change to current user's memories, not all memories
-        return new SerendipityCollection<>(memoryRepository.findAll());
+        // TODO: this will change to current user's memories, not hard-coded userId
+        int userId = 1;
+
+        return new SerendipityCollection<>(memoryRepository.findWByUserId(userId));
     }
 
     @RequestMapping(value = "/memories", method = RequestMethod.POST)
