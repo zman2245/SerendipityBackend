@@ -33,7 +33,7 @@ public class Memory {
     private String artworkLink;
 
     @Column
-    private int bgColor;
+    private Integer bgColor;
 
     @Column
     private Integer creator;
@@ -97,6 +97,10 @@ public class Memory {
     }
 
     public int getBgColor() {
+        if (bgColor == null) {
+            return 0x0;
+        }
+
         return bgColor;
     }
 
